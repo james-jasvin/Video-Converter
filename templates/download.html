@@ -1,0 +1,74 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<style>
+	.bg-image {
+		left: 0;
+		position: absolute;
+		background-image: url("../static/images/background.jpg");
+		background-size: cover;
+		width: 100%;
+		height: 100%;
+		/*Moving image to the background so text can be overlayed on it*/
+		z-index: -1;
+	}
+	#content {
+		height: 100%;
+		width: 100%;
+	}
+	#header {
+		font-family: 'Raleway', sans-serif;
+		text-align: center;
+	}
+	.content-block {
+		border-radius: 15px;
+		opacity: 0.95;
+		background-color: #cf9ba8;
+	}
+	#download-container {
+		border-radius: 10px;
+		padding: 20px;
+		text-align: center;
+		background-color: #2f4353;
+		background-image: linear-gradient(315deg, #2f4353, #bbccd9);
+		font-size: 22px;
+	}
+</style>
+
+<div class="container-fluid">
+	<!-- Contains background image -->
+	<div class="bg-image"></div>
+
+	<!-- Contains actual content of the page -->
+	<div id="content" class="d-flex flex-column align-items-center justify-content-center">
+
+		<!-- div to just make the content span a smaller width -->
+		<div id="content-container">
+
+			<div id="header" class="content-block p-2 display-4 font-weight-bold"> 
+				Welcome to VideoEvangelizer&trade; <br>
+				<small> The Online Video Converter </small>
+			</div>
+
+			<div id="download-container" class="mt-5">
+				<h3> Your converted video is ready for download </h3>
+
+				<!-- onclick add a function that will download the S3 video -->
+				<small id="filename"> filename.format </small> <div class="btn btn-dark" onclick=""> Download </div>
+
+			</div>
+
+		</div>
+
+		<footer class="bg-dark text-white">
+			&copy;TurdGang 2021-2021
+		</footer>
+	</div>
+</div>

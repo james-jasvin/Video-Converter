@@ -1,0 +1,213 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<style>
+	.bg-image {
+		left: 0;
+		position: absolute;
+		background-image: url("../static/images/background.jpg");
+		background-size: cover;
+		width: 100%;
+		height: 100%;
+		/*Moving image to the background so text can be overlayed on it*/
+		z-index: -1;
+	}
+	#content {
+		height: 100%;
+		width: 100%;
+	}
+	#header {
+		font-family: 'Raleway', sans-serif;
+		text-align: center;
+	}
+	.content-block {
+		border-radius: 15px;
+		opacity: 0.95;
+		background-color: #cf9ba8;
+	}
+	#form-container {
+		border-radius: 10px;
+		padding: 20px 20px 20px 30%;
+		background-color: #2f4353;
+		background-image: linear-gradient(315deg, #2f4353, #bbccd9);
+		font-size: 22px;
+	}
+
+	/* Hide the HTML5 file upload button as well as the error message block */
+	#uploadButton, #errorMessage {
+		display: none;
+	}
+	#errorMessage {
+		text-align: center;
+		margin-left: -40%;
+	}
+	/* Custom alert class to override Bootstrap's alert */ 
+	.alert-custom {
+		background-color: #f4eac8;
+		color: black;
+	}
+
+	#loading {
+		display: none;
+		margin-top: 10px;
+		text-align: right;
+		color: white;
+	}
+
+</style>
+
+<div class="container-fluid">
+	<!-- Contains background image -->
+	<div class="bg-image"></div>
+
+	<!-- Contains actual content of the page -->
+	<div id="content" class="d-flex flex-column align-items-center justify-content-center">
+
+		<!-- div to just make the content span a smaller width -->
+		<div id="content-container">
+
+			<div id="header" class="content-block p-2 display-4 font-weight-bold"> 
+				Welcome to VideoEvangelizer&trade; <br>
+				<small> The Online Video Converter </small>
+			</div>
+
+			<div id="form-container" class="mt-5">
+				<form id="uploadForm" action="" method="POST" enctype="multipart/form-data" onsubmit="return checkFileUpload();">
+
+					<!-- Upload Button -->
+					<div class="form-group mt-3">
+						<!-- Haxx to make good looking HTML form button -->
+						<label class="label-title font-weight-bold"> Upload a Video to Convert </label> <br>
+
+						<!-- Hide the actual file button -->
+						<input type="file" value="Browse" id="uploadButton">
+
+						<!-- Make this label the file button by making its for attribute point to id of file button -->
+						<label for="uploadButton" class="btn btn-dark"> Upload </label> <br>
+
+						<!-- Will contain name of file uploaded -->
+						 <small> <span id="fileChosen"> No file uploaded </span> </small> 
+					</div>
+
+					<!-- Select Video Format -->
+					<div class="form-group">
+						<label for="video-format" class="font-weight-bold"> Select Format to Convert to </label> <br>
+						<small>
+							<select id="fileFormatSelect" class="pl-2 pr-2" required>
+								<option>.mkv</option>
+								<option>.mp4</option>
+								<option>.avi</option>
+							</select>
+						</small>
+					</div>
+
+					<!-- Convert Button -->
+					<div class="form-group">
+						<input class="btn btn-dark" type="submit" value="Convert">
+					</div>
+				</form>	
+
+				<!-- div to display any error message (client or server-side) -->
+				<div id="errorMessage"></div>
+
+				<div id="loading" class="container" style="">
+					<!-- <div class="spinner-border text-success"></div>
+					<div class="spinner-grow text-success"></div>
+					<div class="spinner-border text-success"></div> -->
+					<h2> <strong> LOADING... </strong> </h2>
+					<div class="spinner-grow text-light"></div>
+					<div class="spinner-border text-light"></div>
+					<div class="spinner-grow text-light"></div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<footer class="bg-dark text-white">
+			&copy;TurdGang 2021-2021
+		</footer>
+	</div>
+</div>
+
+<!-- JavaScript that will update text of element with id="file-chosen" to be equal to the name of the file uploaded, feature that is provided by HTML by default but we hid it to make a better button -->
+<script>
+	const uploadBtn = document.getElementById('uploadButton');
+	const fileChosenSpan = document.getElementById('fileChosen');
+
+	uploadBtn.addEventListener('change', function(){
+	  fileChosenSpan.innerHTML = "Your uploaded file is \"<i>" + this.files[0].name + "</i>\""
+	});
+</script>
+
+<!-- Client-side Validation -->
+<script>
+	function checkFileUpload() {
+		const uploadBtn = document.getElementById('uploadButton');
+
+		console.log(uploadBtn.files);
+		// Check whether file is uploaded or not
+		if (uploadBtn.files.length == 1) {
+
+			fileNameArray = uploadBtn.files[0].name.split('.');
+			// Prepend "." as checking is more convenient that way
+			uploadedFileFormat = "." + fileNameArray[fileNameArray.length - 1];
+
+			// Get the file format to convert to from the Dropdown in the form
+			const fileFormatSelect = document.getElementById('fileFormatSelect').options;
+			const fileFormatSelected = fileFormatSelect[fileFormatSelect.selectedIndex].innerText;
+			console.log(fileFormatSelected);
+
+
+			supportedFileFormatsArray = ['.mp4', '.mkv', '.avi'];
+
+			errorMessageText = "";
+
+			// Are format to convert to and uploaded file format, the same?
+			if (uploadedFileFormat == fileFormatSelected) {
+				console.log("File format to convert to should be different than uploaded file format");
+				errorMessageText = "File format to convert to should be different than uploaded file format";
+			}
+
+			// Is uploaded file of supported format?
+			else if (!supportedFileFormatsArray.includes(uploadedFileFormat)) {
+				console.log("The uploaded file format is not supported");
+				errorMessageText = "The uploaded file format is not supported"
+			}
+
+			// Passed all checks and can now be sent to server
+			else {
+				loaders = document.getElementById("loading");
+				loaders.style.display = 'block';
+				return true;
+			}
+
+			// Did not pass check, so show the errorMessageDiv and do not allow form to be submitted
+			showErrorDiv(errorMessageText);
+			return false;
+		}
+		
+		errorMessageText = "No file uploaded";
+		showErrorDiv(errorMessageText)
+		console.log("No file uploaded");
+
+		return false;
+	}
+
+	function showErrorDiv(errorMessageText) {
+		errorMessageDiv = document.getElementById("errorMessage");
+
+		errorMessageDiv.innerHTML = "<small class='alert alert-custom'>" + errorMessageText + "</small>";
+		// Unhide the error message div
+		errorMessageDiv.style.display = 'block';
+
+	}
+
+</script>
