@@ -95,12 +95,11 @@
 <div class="container-fluid">
 	<!-- Sticky navbar at top of page -->
 	<nav class="navbar sticky-top row regular-shadow">
-		<a class="navbar-brand text-light regular-text-shadow" href="#"> <h4> <b> VideoEvangelizer&trade; </h4> </b> </a> 
+		<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> <h4> <b> VideoEvangelizer&trade; </h4> </b> </a> 
 
-		<!-- Add link to actual source code later on in this -->
-		<div class="btn btn-primary">
+		<a class="btn btn-primary" href="https://github.com/CCL-Project/video-converter/archive/master.zip">
 			Source Code <i class="fa fa-download" aria-hidden="true"></i>
-		</div>
+		</a>
 	</nav>
 
 
@@ -144,6 +143,9 @@
 								<option>.mkv</option>
 								<option>.mp4</option>
 								<option>.avi</option>
+								<option>.flv</option>
+								<option>.webm</option>
+								<option>.wmv</option>
 							</select>
 						</small>
 					</div>
@@ -226,7 +228,7 @@
 			console.log(fileFormatSelected);
 
 
-			supportedFileFormatsArray = ['.mp4', '.mkv', '.avi'];
+			supportedFileFormatsArray = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv'];
 
 			errorMessageText = "";
 

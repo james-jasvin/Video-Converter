@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, send_file
 import uuid
 import moviepy.editor as moviepy
 from pathlib import Path
@@ -13,11 +13,12 @@ UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads/')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Set of allowed extensions
-app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.avi', '.mkv']
+app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv']
 
 # Set input and output video absolute paths
-INPUT_FOLDER_PATH = UPLOAD_FOLDER + "input_videos/"
-OUTPUT_FOLDER_PATH = UPLOAD_FOLDER + "output_videos/"
+INPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "input_videos/")
+OUTPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "output_videos/")
+
 
 @app.route('/')
 @app.route('/home')
@@ -28,7 +29,11 @@ def home(error=None):
 	return render_template('home.html', error=error)
 
 
-
+'''
+	Route that is triggered when the Convert button on "home.html" is clicked and all the client side validation is passed
+	This route performs server-side validation, if failed, redirects to home with proper error code and if succeeded
+	converts video to requested format and then leads to the "download.html" page
+'''
 @app.route('/results', methods=['POST'])
 def results():
 
@@ -51,20 +56,27 @@ def results():
 
 		# Filename = User ID + File ID + "." + Uploaded File Format
 		file_format = os.path.splitext(user_filename)[1]
-		filename = session['user_uuid'] + file_id + file_format
+		input_filename = session['user_uuid'] + file_id + file_format
+		output_filename = session['user_uuid'] + file_id + convert_format
 
 		# Save video on local machine at given path
-		absolute_filename = os.path.join(INPUT_FOLDER_PATH, filename)
-		file_object.save(absolute_filename)
+		input_filepath = os.path.join(INPUT_FOLDER_PATH, input_filename)
+		file_object.save(input_filepath)
 
-		# call function that takes video file path and file format and converts it and returns path of converted video
-		video_converter(absolute_filename, convert_format, OUTPUT_FOLDER_PATH)
+		# Function that takes video file path and file format and converts it
+		video_converter(input_filepath, convert_format, OUTPUT_FOLDER_PATH)
 
-
-		return render_template('download.html', )
+		return render_template('download.html', filename=output_filename)
 
 	return redirect(url_for('home'))
 
+
+'''
+	Route that sends the converted video for download when the "Download" button on downloads.html page is clicked
+'''
+@app.route('/download/<filename>', methods=['GET', 'POST'])
+def download(filename):
+	return send_from_directory(directory=OUTPUT_FOLDER_PATH, filename=filename, as_attachment=True)
 
 '''
 	Performs server side validation
@@ -106,15 +118,15 @@ def video_converter(filepath, extension, output_directory):
 	head, tail = os.path.split(filepath)
 	basename = Path(tail).stem  # Gintama.mkv -> Gintama
 
-	# ogextension = os.path.splitext(tail)[1]
+	output_filename = basename + extension   # Gintama + new_extension
+	output_filepath = output_directory + output_filename
 
-	output = basename + extension   # Gintama + new_extension
-
-	if extension != '.mp4':
-		clip.write_videofile(output_directory + output, codec='libvpx')
+	if extension == '.mp4':
+		clip.write_videofile(output_filepath)
+	elif extension == '.flv':
+		clip.write_videofile(output_filepath, codec='libx264')
 	else:
-		clip.write_videofile(output_directory + output)
-
+		clip.write_videofile(output_filepath, codec='libvpx')
 
 
 
