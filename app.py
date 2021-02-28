@@ -1,6 +1,8 @@
 import os
 from flask import Flask, request, render_template, redirect, url_for, session
 import uuid
+import moviepy.editor as moviepy
+from pathlib import Path
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -49,17 +51,17 @@ def results():
 
 		# Filename = User ID + File ID + "." + Uploaded File Format
 		file_format = os.path.splitext(user_filename)[1]
-		filename = session['user_uuid'] + file_id + "." + file_format
+		filename = session['user_uuid'] + file_id + file_format
 
 		# Save video on local machine at given path
-		file_object.save(os.path.join(INPUT_FOLDER_PATH, filename))
+		absolute_filename = os.path.join(INPUT_FOLDER_PATH, filename)
+		file_object.save(absolute_filename)
 
 		# call function that takes video file path and file format and converts it and returns path of converted video
+		video_converter(absolute_filename, convert_format, OUTPUT_FOLDER_PATH)
 
 
-
-
-		return render_template('download.html')
+		return render_template('download.html', )
 
 	return redirect(url_for('home'))
 
@@ -95,9 +97,23 @@ def server_side_validation(request, user_filename, convert_format):
 		# error_code = "File size should not be greater than 10MB"
 		error_code = 104
 
-
 	return error_code
 
+
+def video_converter(filepath, extension, output_directory):
+	clip = moviepy.VideoFileClip(filepath)
+
+	head, tail = os.path.split(filepath)
+	basename = Path(tail).stem  # Gintama.mkv -> Gintama
+
+	# ogextension = os.path.splitext(tail)[1]
+
+	output = basename + extension   # Gintama + new_extension
+
+	if extension != '.mp4':
+		clip.write_videofile(output_directory + output, codec='libvpx')
+	else:
+		clip.write_videofile(output_directory + output)
 
 
 
