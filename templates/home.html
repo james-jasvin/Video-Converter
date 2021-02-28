@@ -3,10 +3,17 @@
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.5/typed.min.js" integrity="sha512-1KbKusm/hAtkX5FScVR5G36wodIMnVd/aP04af06iyQTkD17szAMGNmxfNH+tEuFp3Og/P5G32L1qEC47CZbUQ==" crossorigin="anonymous"></script>
+
+<!-- Add onload function -->
+<!-- Refresh to clear out error text -->
 
 <style>
 	.bg-image {
@@ -27,6 +34,13 @@
 		font-family: 'Raleway', sans-serif;
 		text-align: center;
 	}
+	.regular-shadow {
+		-webkit-box-shadow: -1px 5px 5px 0px #111;
+		box-shadow: -1px 5px 5px 0px #111;
+	}
+	.regular-text-shadow {
+		text-shadow: 2px 2px 0 #111;
+	}
 	.content-block {
 		border-radius: 15px;
 		opacity: 0.95;
@@ -38,13 +52,14 @@
 		background-color: #2f4353;
 		background-image: linear-gradient(315deg, #2f4353, #bbccd9);
 		font-size: 22px;
+		opacity: 0.95;
 	}
 
 	/* Hide the HTML5 file upload button as well as the error message block */
 	#uploadButton, #errorMessage {
 		display: none;
 	}
-	#errorMessage {
+	#errorMessageClient {
 		text-align: center;
 		margin-left: -40%;
 	}
@@ -61,9 +76,34 @@
 		color: white;
 	}
 
+	nav {
+		background-color: #2c457c;
+		background-image: linear-gradient(90deg, #4163b4, #2c457c);
+	}
+
+	nav > a {
+
+	}
+	.close-button {
+		margin-left: 5px;
+		cursor: pointer;
+		color: red;
+	}
+
 </style>
 
 <div class="container-fluid">
+	<!-- Sticky navbar at top of page -->
+	<nav class="navbar sticky-top row regular-shadow">
+		<a class="navbar-brand text-light regular-text-shadow" href="#"> <h4> <b> VideoEvangelizer&trade; </h4> </b> </a> 
+
+		<!-- Add link to actual source code later on in this -->
+		<div class="btn btn-primary">
+			Source Code <i class="fa fa-download" aria-hidden="true"></i>
+		</div>
+	</nav>
+
+
 	<!-- Contains background image -->
 	<div class="bg-image"></div>
 
@@ -73,13 +113,13 @@
 		<!-- div to just make the content span a smaller width -->
 		<div id="content-container">
 
-			<div id="header" class="content-block p-2 display-4 font-weight-bold"> 
+			<div id="header" class="content-block p-2 display-4 font-weight-bold regular-shadow"> 
 				Welcome to VideoEvangelizer&trade; <br>
-				<small> The Online Video Converter </small>
+				<small class="text-slider"> The Online Video Converter </small>
 			</div>
 
-			<div id="form-container" class="mt-5">
-				<form id="uploadForm" action="" method="POST" enctype="multipart/form-data" onsubmit="return checkFileUpload();">
+			<div id="form-container" class="mt-5 regular-shadow">
+				<form id="uploadForm" action="{{url_for('results')}}" method="POST" enctype="multipart/form-data" onsubmit="return checkFileUpload();">
 
 					<!-- Upload Button -->
 					<div class="form-group mt-3">
@@ -87,7 +127,7 @@
 						<label class="label-title font-weight-bold"> Upload a Video to Convert </label> <br>
 
 						<!-- Hide the actual file button -->
-						<input type="file" value="Browse" id="uploadButton">
+						<input type="file" value="Browse" id="uploadButton" name="uploadButton">
 
 						<!-- Make this label the file button by making its for attribute point to id of file button -->
 						<label for="uploadButton" class="btn btn-dark"> Upload </label> <br>
@@ -100,7 +140,7 @@
 					<div class="form-group">
 						<label for="video-format" class="font-weight-bold"> Select Format to Convert to </label> <br>
 						<small>
-							<select id="fileFormatSelect" class="pl-2 pr-2" required>
+							<select id="fileFormatSelect" name="fileFormatSelect" class="pl-2 pr-2" required>
 								<option>.mkv</option>
 								<option>.mp4</option>
 								<option>.avi</option>
@@ -114,13 +154,33 @@
 					</div>
 				</form>	
 
-				<!-- div to display any error message (client or server-side) -->
-				<div id="errorMessage"></div>
+				<!-- div to display any error message (Client-Side) -->
+				<div id="errorMessageClient"></div>
 
+
+
+				<!-- Displaying Server-Side error message -->
+				{% if error %}
+					<small id="errorMessageServer" class='alert alert-custom'> 
+						{% if error == 101 %} 
+							No file uploaded
+
+						{% elif error == 102 %}
+							The uploaded file format is not supported
+
+						{% elif error == 103 %}
+							File format to convert to should be different than uploaded file format
+
+						{% else %}
+							File size should not be greater than 10MB
+						{% endif %}
+
+						<i class="close-button fas fa-window-close"></i>
+					</small>
+				{% endif %}
+
+				<!-- Spinners for display when loading of converted video begins -->
 				<div id="loading" class="container" style="">
-					<!-- <div class="spinner-border text-success"></div>
-					<div class="spinner-grow text-success"></div>
-					<div class="spinner-border text-success"></div> -->
 					<h2> <strong> LOADING... </strong> </h2>
 					<div class="spinner-grow text-light"></div>
 					<div class="spinner-border text-light"></div>
@@ -143,7 +203,7 @@
 	const fileChosenSpan = document.getElementById('fileChosen');
 
 	uploadBtn.addEventListener('change', function(){
-	  fileChosenSpan.innerHTML = "Your uploaded file is \"<i>" + this.files[0].name + "</i>\""
+	  fileChosenSpan.innerHTML = "Your uploaded file is \"<i><b>" + this.files[0].name + "</b></i>\""
 	});
 </script>
 
@@ -202,12 +262,38 @@
 	}
 
 	function showErrorDiv(errorMessageText) {
-		errorMessageDiv = document.getElementById("errorMessage");
+		errorMessageDiv = document.getElementById("errorMessageClient");
 
-		errorMessageDiv.innerHTML = "<small class='alert alert-custom'>" + errorMessageText + "</small>";
+		errorMessageDiv.innerHTML = "<small class='alert alert-custom'>" + errorMessageText + "<i class='close-button fas fa-window-close'></i></small>";
 		// Unhide the error message div
 		errorMessageDiv.style.display = 'block';
 
+		$(".close-button").click(function() {
+			$(".close-button").parent().slideUp(1000);
+		});
 	}
-
 </script>
+
+<!-- Script for close button on Server-side warnings -->
+<!-- This same script is repeated in above Client-side script as there is an issue with event listeners -->
+<script>
+	$(".close-button").click(function() {
+		$(".close-button").parent().slideUp(1000);
+	});
+</script>
+
+<!-- testing typing animation -->
+<!-- Add this script for successful implementation of typed.js -->
+<script> 
+	if ($(".text-slider").length == 1) { 
+
+		var typed_strings = "It is a Video Converter, It is Free to Use, Convert your Videos within seconds!, The Online Video Converter"
+
+		var typed = new Typed(".text-slider", { 
+			strings: typed_strings.split(", "), 
+			typeSpeed: 30, 
+			backDelay: 1000, 
+			backSpeed: 30, 
+		}); 
+	} 
+</script> 
