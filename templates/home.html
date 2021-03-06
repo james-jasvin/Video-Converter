@@ -92,7 +92,11 @@
 
 </style>
 
-<div class="container-fluid">
+<!-- onunload = User backspaces to reach home page -->
+<!-- onload = Home Page loads properly -->
+<!-- When Home Page loads, clear form data and hide error messages -->
+<!-- When user backspaces to reach home page, reload page so that the clearPage method gets triggered -->
+<body class="container-fluid" onunload="reloadPage();" onload="clearPage();">
 	<!-- Sticky navbar at top of page -->
 	<nav class="navbar sticky-top row regular-shadow">
 		<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> <h4> <b> VideoEvangelizer&trade; </h4> </b> </a> 
@@ -159,8 +163,6 @@
 				<!-- div to display any error message (Client-Side) -->
 				<div id="errorMessageClient"></div>
 
-
-
 				<!-- Displaying Server-Side error message -->
 				{% if error %}
 					<small id="errorMessageServer" class='alert alert-custom'> 
@@ -197,7 +199,7 @@
 			&copy;TurdGang 2021-2021
 		</footer>
 	</div>
-</div>
+</body>
 
 <!-- JavaScript that will update text of element with id="file-chosen" to be equal to the name of the file uploaded, feature that is provided by HTML by default but we hid it to make a better button -->
 <script>
@@ -214,7 +216,6 @@
 	function checkFileUpload() {
 		const uploadBtn = document.getElementById('uploadButton');
 
-		console.log(uploadBtn.files);
 		// Check whether file is uploaded or not
 		if (uploadBtn.files.length == 1) {
 
@@ -225,24 +226,18 @@
 			// Get the file format to convert to from the Dropdown in the form
 			const fileFormatSelect = document.getElementById('fileFormatSelect').options;
 			const fileFormatSelected = fileFormatSelect[fileFormatSelect.selectedIndex].innerText;
-			console.log(fileFormatSelected);
-
 
 			supportedFileFormatsArray = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv'];
 
 			errorMessageText = "";
 
 			// Are format to convert to and uploaded file format, the same?
-			if (uploadedFileFormat == fileFormatSelected) {
-				console.log("File format to convert to should be different than uploaded file format");
+			if (uploadedFileFormat == fileFormatSelected)
 				errorMessageText = "File format to convert to should be different than uploaded file format";
-			}
 
 			// Is uploaded file of supported format?
-			else if (!supportedFileFormatsArray.includes(uploadedFileFormat)) {
-				console.log("The uploaded file format is not supported");
-				errorMessageText = "The uploaded file format is not supported"
-			}
+			else if (!supportedFileFormatsArray.includes(uploadedFileFormat))
+				errorMessageText = "The uploaded file format is not supported";
 
 			// Passed all checks and can now be sent to server
 			else {
@@ -258,7 +253,6 @@
 		
 		errorMessageText = "No file uploaded";
 		showErrorDiv(errorMessageText)
-		console.log("No file uploaded");
 
 		return false;
 	}
@@ -284,8 +278,7 @@
 	});
 </script>
 
-<!-- testing typing animation -->
-<!-- Add this script for successful implementation of typed.js -->
+<!-- typed.js script that shows up on home page with fancy text animation on header text -->
 <script> 
 	if ($(".text-slider").length == 1) { 
 
@@ -299,3 +292,14 @@
 		}); 
 	} 
 </script> 
+
+<script>
+	function reloadPage() {
+		location.reload();
+	}
+	function clearPage() {
+		$("#errorMessageClient").hide();
+		$("#errorMessageServer").hide();
+		$("#uploadForm").trigger("reset");
+	}
+</script>
