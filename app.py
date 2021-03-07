@@ -63,8 +63,12 @@ def results():
 		input_filepath = os.path.join(INPUT_FOLDER_PATH, input_filename)
 		file_object.save(input_filepath)
 
+		print("Input Video Saved")
+
 		# Function that takes video file path and file format and converts it
 		video_converter(input_filepath, convert_format, OUTPUT_FOLDER_PATH)
+
+		print("Video Conversion Complete")
 
 		return render_template('download.html', filename=output_filename)
 
@@ -114,6 +118,7 @@ def server_side_validation(request, user_filename, convert_format):
 
 def video_converter(filepath, extension, output_directory):
 	clip = moviepy.VideoFileClip(filepath)
+	print("Loaded clip and starting conversion")
 
 	head, tail = os.path.split(filepath)
 	basename = Path(tail).stem  # Gintama.mkv -> Gintama
