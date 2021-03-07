@@ -134,7 +134,8 @@ def video_converter(filepath, extension, output_directory):
 		clip.write_videofile(output_filepath, codec='libvpx')
 
 
-
+if __name__ == "__main__":
+	app.run()
 
 
 
