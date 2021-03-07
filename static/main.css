@@ -1,0 +1,85 @@
+
+.bg-image {
+	left: 0;
+	position: absolute;
+	background: url(/static/images/background.jpg);
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+	/* Moving image to the background so text can be overlayed on it */
+	z-index: -1;
+}
+
+nav {
+	background-color: #2c457c;
+	background-image: linear-gradient(90deg, #4163b4, #2c457c);
+}
+
+#content {
+	height: 100%;
+	width: 100%;
+}
+
+.content-block {
+	border-radius: 15px;
+	opacity: 0.95;
+}
+.content-container {
+	background-color: #2f4353;
+	background-image: linear-gradient(315deg, #2f4353, #bbccd9);
+	font-size: 22px;
+	padding: 20px;
+}
+
+#header {
+	margin-top: 5%;
+	font-family: 'Raleway', sans-serif;
+	text-align: center;
+	font-weight: bold;
+	background-color: #cf9ba8;
+}
+
+#form-container {
+	padding-left: 30%;
+}
+#download-container {
+	text-align: center;
+}
+
+/* Hide the HTML5 file upload button */
+#uploadButton {
+	display: none;
+}
+
+#errorMessageClient, #errorMessageServer {
+	text-align: center;
+	margin-left: -50%;
+}
+
+/* Custom alert class to override Bootstrap's alert */ 
+.alert-custom {
+	background-color: #f4eac8;
+	color: black;
+}
+
+/* Displays Bootstrap spinner loaders when video is being processed */
+#loading {
+	display: none;
+	margin-top: 10px;
+	text-align: right;
+	color: white;
+}
+
+.close-button {
+	margin-left: 5px;
+	cursor: pointer;
+	color: red;
+}
+
+.regular-shadow {
+	-webkit-box-shadow: -1px 5px 5px 0px #111;
+	box-shadow: -1px 5px 5px 0px #111;
+}
+.regular-text-shadow {
+	text-shadow: 2px 2px 0 #111;
+}

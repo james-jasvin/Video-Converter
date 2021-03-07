@@ -1,101 +1,70 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<!-- Bootstrap 4.4.1 -->
+		<link rel="stylesheet" type="text/css" href="/static/lib/bootstrap.min.css"></link>
 
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
+		<!-- JQuery 3.6.0 -->
+		<script src="/static/lib/jquery-3.6.0.min.js"></script>
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+		<!-- typed.js -->
+		<script src="/static/lib/typed.min.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<!-- Font Awesome Icons CDN -->
+		<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
-<style>
+		<!-- Raleway Google Font  -->
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
 
-	.bg-image {
-		left: 0;
-		position: absolute;
-		background-image: url("../static/images/background.jpg");
-		background-size: cover;
-		width: 100%;
-		height: 100%;
-		/*Moving image to the background so text can be overlayed on it*/
-		z-index: -1;
-	}
-	#content {
-		height: 100%;
-		width: 100%;
-	}
-	#header {
-		font-family: 'Raleway', sans-serif;
-		text-align: center;
-	}
-	.regular-shadow {
-		-webkit-box-shadow: -1px 5px 5px 0px #111;
-		box-shadow: -1px 5px 5px 0px #111;
-	}
-	.regular-text-shadow {
-		text-shadow: 2px 2px 0 #111;
-	}
-	.content-block {
-		border-radius: 15px;
-		opacity: 0.95;
-		background-color: #cf9ba8;
-	}
-	#download-container {
-		border-radius: 10px;
-		padding: 20px;
-		text-align: center;
-		background-color: #2f4353;
-		background-image: linear-gradient(315deg, #2f4353, #bbccd9);
-		font-size: 22px;
-		opacity: 0.95;
-	}
+		<!-- External CSS & JS Script -->
+		<link rel="stylesheet" type="text/css" href="/static/main.css">
+		<script src="/static/main.js"></script> 
+	</head>
 
-	nav {
-		background-color: #2c457c;
-		background-image: linear-gradient(90deg, #4163b4, #2c457c);
-	}
+	<body class="container-fluid">
+		<!-- Sticky navbar at top of page -->
+		<nav class="navbar sticky-top row regular-shadow">
+			<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> 
+				<h4> <b> VideoEvangelizer&trade; </b> </h4>  
+			</a> 
 
-</style>
+			<!-- Add link to actual source code later on in this -->
+			<a class="btn btn-primary" href="https://github.com/CCL-Project/video-converter/archive/master.zip">
+				Source Code <i class="fa fa-download" aria-hidden="true"></i>
+			</a>
+		</nav>
 
-<div class="container-fluid">
-	<!-- Sticky navbar at top of page -->
-	<nav class="navbar sticky-top row regular-shadow">
-		<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> <h4> <b> VideoEvangelizer&trade; </h4> </b> </a> 
+		<!-- Contains background image -->
+		<div class="bg-image"></div>
 
-		<!-- Add link to actual source code later on in this -->
-		<a class="btn btn-primary" href="https://github.com/CCL-Project/video-converter/archive/master.zip">
-			Source Code <i class="fa fa-download" aria-hidden="true"></i>
-		</a>
-	</nav>
+		<!-- Contains actual content of the page -->
+		<div id="content" class="d-flex flex-column align-items-center justify-content-center">
 
-	<!-- Contains background image -->
-	<div class="bg-image"></div>
+			<!-- div to just make the content span a smaller width -->
+			<div>
 
-	<!-- Contains actual content of the page -->
-	<div id="content" class="d-flex flex-column align-items-center justify-content-center">
+				<div id="header" class="regular-shadow content-block p-2 display-4 font-weight-bold"> 
+					Welcome to VideoEvangelizer&trade; <br>
+					<small> The Online Video Converter </small>
+				</div>
 
-		<!-- div to just make the content span a smaller width -->
-		<div id="content-container">
+				<div id="download-container" class="content-block content-container mt-5 regular-shadow">
+					<h3> Your converted video is ready for download </h3>
 
-			<div id="header" class="regular-shadow content-block p-2 display-4 font-weight-bold"> 
-				Welcome to VideoEvangelizer&trade; <br>
-				<small> The Online Video Converter </small>
+					<a class="btn btn-dark regular-shadow mb-5" href="{{ url_for('download', filename=filename) }}"> Download </a> <br>
+
+					<h4> Start converting another video </h4>
+					<a class="btn btn-dark regular-shadow" href="{{ url_for('home') }}"> Back <i class="fas fa-arrow-circle-left"> </i> </a>
+				</div>
 			</div>
 
-			<div id="download-container" class="mt-5 regular-shadow">
-				<h3> Your converted video is ready for download </h3>
-
-				<a class="btn btn-dark regular-shadow mb-5" href="{{ url_for('download', filename=filename) }}"> Download </a> <br>
-
-				<h4> Start converting another video </h4>
-				<a class="btn btn-dark regular-shadow" href="{{ url_for('home') }}"> Back <i class="fas fa-arrow-circle-left"> </i> </a>
-			</div>
+			<footer class="bg-dark text-white">
+				&copy;TurdGang 2021-2021
+			</footer>
 		</div>
-
-		<footer class="bg-dark text-white">
-			&copy;TurdGang 2021-2021
-		</footer>
-	</div>
-</div>
+	</body>
+</html>
