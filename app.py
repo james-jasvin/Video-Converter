@@ -4,9 +4,9 @@ import uuid
 import moviepy.editor as moviepy
 from pathlib import Path
 
-# from rq import Queue
-# from rq.job import Job
-# from worker import conn
+from rq import Queue
+from rq.job import Job
+from worker import conn
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -23,7 +23,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wm
 INPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "input_videos/")
 OUTPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "output_videos/")
 
-# queue = Queue(connection=conn)
+queue = Queue(connection=conn)
 
 @app.route('/')
 @app.route('/home')
@@ -71,16 +71,17 @@ def results():
 		print("Input Video Saved")
 
 		# Function that takes video file path and file format and converts it
-		video_converter(input_filepath, convert_format, OUTPUT_FOLDER_PATH)
+		# video_converter(input_filepath, convert_format, OUTPUT_FOLDER_PATH)
 
 
-		# The result_ttl=5000 line argument tells RQ how long to hold on to the result of the job for, 5,000 seconds in this case. 
-		# job = queue.enqueue_call(
-		# 	func='app.video_converter', 
-		# 	args=(input_filepath, convert_format, OUTPUT_FOLDER_PATH),
-		# 	result_ttl=5000)
+		# The result_ttl=5000 line argument tells RQ how long to hold on to the result of the job for, 
+		# 5,000 seconds in this case. 
+		job = queue.enqueue_call(
+			func='app.video_converter', 
+			args=(input_filepath, convert_format, OUTPUT_FOLDER_PATH),
+			result_ttl=5000)
 
-		# print(job.get_id())
+		print(job.get_id())
 
 		# Job started, check whether it has completed by sending it to the results route
 		# print("Video Conversion Complete")
@@ -90,15 +91,15 @@ def results():
 	return redirect(url_for('home'))
 
 
-# @app.route('/results/<job_key>', methods=['GET'])
-# def get_results(job_key):
+@app.route('/results/<job_key>', methods=['GET'])
+def get_results(job_key):
 
-# 	job = Job.fetch(job_key, connection=conn)
-
-# 	if job.is_finished:
-# 		return str(job.result), 200
-# 	else:
-# 		return "Nay!", 202
+	job = Job.fetch(job_key, connection=conn)
+	
+	if job.is_finished:
+		return "Video Conversion Complete", 200
+	else:
+		return "Nay!", 202
 
 
 '''
