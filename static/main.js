@@ -21,6 +21,11 @@ function checkFileUpload(uploadBtn, fileFormatSelected) {
 		else if (!supportedFileFormatsArray.includes(uploadedFileFormat))
 			errorMessageText = "The uploaded file format is not supported";
 
+		// 4. Is file size less than 10MB?
+		// 10MB = 10485760 Bytes
+		else if (uploadBtn.files[0].size > 10485760)
+			errorMessageText = "The uploaded file size should be less than 10MB";
+
 		// Passed all checks and can now be sent to server
 		else {
 			var loaders = document.getElementById("loading");
@@ -83,6 +88,14 @@ $(document).ready(function() {
 
 
 	if ($("body").hasClass("homePage")) {
+		// If user is on home page but URL bar shows results or anything else
+		// because of unauthorized access by user to results endpoint without submitting form
+		// then redirect user to home with Unauthorized access error code
+
+		var location = window.location.href.split('/');
+		var currentLocation = location[location.length - 1];
+		if (currentLocation == "results")
+			window.location.replace("../105");
 
 		/* 
 			JavaScript that will update text of element with id="fileChosen" to be equal to the name of the file uploaded, 
@@ -102,28 +115,33 @@ $(document).ready(function() {
 			$(".close-button").parent().slideUp(1000);
 		});	
 
+		// Add onsubmit event handler that prevents form submission
 		// When convert button is clicked, call client validation, if passed then post data to results route and
 		// also hide the error messages and then call the poller function
-		$("#convertButton").on('click', function() {
+		var form = document.getElementById("uploadForm");
+		form.onsubmit = function(event) {
+			event.preventDefault();
 
 			var uploadBtn = document.getElementById("uploadButton");
 			var fileFormatSelected = document.getElementById("fileFormatSelect").value;
-
-			if (checkFileUpload(uploadBtn, fileFormatSelected) === false)
-				return false;
-
 
 			/*
 				When Convert Button is clicked, hide both error messages (client and server)
 				But do not hide the div, instead hide the "small" tag that's nested within the div
 				which contains the actual error message as well as the close icon
+				Note: Hide Client Side error message only when Client side validation is actually passed by submission.
+				That's why its placed after validation call.
 			*/
-			$("#errorMessageClient").find("small").hide();
 			$("#errorMessageServer").find("small").hide();
+
+			if (checkFileUpload(uploadBtn, fileFormatSelected) === false)
+				return false;
+
+			$("#errorMessageClient").find("small").hide();
 
 			var formData = new FormData();
 			formData.append('fileFormatSelect', fileFormatSelected);
-			formData.append('file', uploadBtn.files[0]);
+			formData.append('file', uploadBtn.files[0], uploadBtn.files[0].name);
 
 			$.ajax({
 				url: '/results',
@@ -133,15 +151,51 @@ $(document).ready(function() {
 				contentType: false
 			})
 			.done((res) => {
-				console.log("Submitted Form Data")
+				// If response has status as fail then it means server-side validation failed, so redirect
+				// to home page with given error_code
+				if (res['status'] === "fail") {
+					var error_code = res['error_code'];
+					window.location.replace('../home/' + error_code);
+				}
+				else {
+					console.log("Calling Poller");
+					getJobStatus(res['job_id']);
+				}
+
 			})
 			.fail((err) => {
 				console.log("Failed form submission");
 				console.log(err);
 			});
-
-		});
-
+		}
 	}
-
 });
+
+
+function getJobStatus(jobID) {
+	$.ajax({
+		url: `/results/${jobID}`,
+		method: 'GET'
+	})
+	.done((res) => {
+		var jobStatus = res['data']['job_status'];
+
+		if (jobStatus === 'finished') {
+			var outputFilename = res['data']['job_result']['filename'];
+			window.location.href = '../downloads/' + outputFilename;
+			return false;
+		}
+		else if (jobStatus === 'failed') {
+			return false;
+		}
+
+		// Call poller function every 2 seconds
+		setTimeout(function() {
+		  getJobStatus(res['data']['job_id']);
+		}, 2000);
+	})
+	.fail((err) => {
+		console.log(err);
+	});
+}
+

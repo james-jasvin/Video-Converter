@@ -119,8 +119,12 @@
 									{% elif error == 103 %}
 										File format to convert to should be different than uploaded file format
 
-									{% else %}
+									{% elif error == 104 %}
 										File size should not be greater than 10MB
+
+									{% else %}
+										Unauthorized access
+
 									{% endif %}
 								</span>
 								<i class="close-button fas fa-window-close"></i>

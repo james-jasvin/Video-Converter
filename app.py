@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, send_file
+from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, send_file, jsonify
 import uuid
 import moviepy.editor as moviepy
 from pathlib import Path
@@ -44,6 +44,11 @@ def home(error=None):
 @app.route('/results', methods=['POST'])
 def results():
 
+	response_object = {
+		'status': "fail",
+		"error_code": ""
+	}
+
 	# Check whether user has visited home page first to get user_uuid before coming to results
 	if 'user_uuid' in session:
 
@@ -56,7 +61,9 @@ def results():
 
 		error_code = server_side_validation(request, user_filename, convert_format)
 		if error_code != None:
-			return redirect(url_for('home', error=error_code))
+			# return redirect(url_for('home', error=error_code))
+			response_object['error_code'] = error_code
+			return jsonify(response_object), 202
 
 		# Generate unique filename for uploaded file
 		file_id = str(uuid.uuid4().hex)[:5]
@@ -87,10 +94,16 @@ def results():
 
 		# Job started, check whether it has completed by sending it to the results route
 		# print("Video Conversion Complete")
+		response_object = {
+			"status": "success",
+			"job_id": job.get_id()
+		}
 
-		return render_template('download.html', filename=output_filename)
-
-	return redirect(url_for('home'))
+		# Respond to request with success code
+		return jsonify(response_object), 202
+		
+	# Return request with failure (indicated by 302 code)
+	return jsonify(response_object), 302
 
 
 @app.route('/results/<job_key>', methods=['GET'])
@@ -98,17 +111,36 @@ def get_results(job_key):
 
 	job = Job.fetch(job_key, connection=conn)
 	
-	if job.is_finished:
-		return "Video Conversion Complete", 200
+	# If job exists then return job id and status along with result
+	# But result will only be present if job has actually finished
+	# So this logic checking will be done by the poller function at client-side
+	if job:
+		response_object = {
+			"status": "success",
+			"data": {
+				"job_id": job.get_id(),
+				"job_status": job.get_status(),
+				"job_result": job.result,
+			},
+		}
 	else:
-		return "Nay!", 202
+		response_object = {"status": "error"}
 
+	return jsonify(response_object)
+	
+'''
+	Route that renders the download page and also takes in filename of output video as a URL parameter
+
+'''
+@app.route('/downloads/<filename>', methods=['GET'])
+def downloads(filename):
+	return render_template('download.html', filename=filename)
 
 '''
 	Route that sends the converted video for download when the "Download" button on downloads.html page is clicked
 '''
-@app.route('/download/<filename>', methods=['GET', 'POST'])
-def download(filename):
+@app.route('/download_file/<filename>', methods=['GET', 'POST'])
+def download_file(filename):
 	return send_from_directory(directory=OUTPUT_FOLDER_PATH, filename=filename, as_attachment=True)
 
 '''
@@ -162,6 +194,13 @@ def video_converter(filepath, extension, output_directory):
 		clip.write_videofile(output_filepath, codec='libx264', preset='ultrafast')
 	else:
 		clip.write_videofile(output_filepath, codec='libvpx', preset='ultrafast')
+
+	response_object = {
+		"status": "success",
+		"filename": output_filename
+	}
+
+	return response_object
 
 
 if __name__ == "__main__":
