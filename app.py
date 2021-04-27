@@ -1,3 +1,7 @@
+#TODO: Change results route to jobs
+# Add dropdown for handling conversion preset
+# Add proper documentation
+
 import os
 from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, send_file, jsonify
 import uuid
