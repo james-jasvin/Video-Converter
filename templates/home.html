@@ -31,7 +31,7 @@
 		When Home Page loads, clear form data and hide error messages (but dont hide Server Side errors)
 		When user backspaces to reach home page, reload page so that the clearPage method gets triggered 
 	-->
-	<body class="container-fluid" onunload="clearPage();" onload="clearPage();">
+	<body class="homePage container-fluid" onunload="clearPage();" onload="clearPage();">
 		<!-- Sticky navbar at top of page -->
 		<nav class="navbar sticky-top row regular-shadow">
 			<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> 
@@ -59,7 +59,7 @@
 				</div>
 
 				<div id="form-container" class="content-block content-container mt-5 regular-shadow">
-					<form id="uploadForm" action="{{url_for('results')}}" method="POST" enctype="multipart/form-data" onsubmit="return checkFileUpload();">
+					<form id="uploadForm" method="POST" enctype="multipart/form-data">
 
 						<!-- Upload Button -->
 						<div class="form-group mt-3">
@@ -78,7 +78,7 @@
 
 						<!-- Select Video Format -->
 						<div class="form-group">
-							<label for="video-format" class="font-weight-bold"> Select Format to Convert to </label> <br>
+							<label for="fileFormatSelect" class="font-weight-bold"> Select Format to Convert to </label> <br>
 							<small>
 								<select id="fileFormatSelect" name="fileFormatSelect" class="pl-2 pr-2" required>
 									<option>.mkv</option>

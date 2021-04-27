@@ -29,8 +29,10 @@ queue = Queue(connection=conn)
 @app.route('/home')
 @app.route('/<error>')
 def home(error=None):
-	# global uuid for user
-	session['user_uuid'] = str(uuid.uuid4().hex)
+	if 'user_uuid' not in session:
+		# global uuid for user
+		session['user_uuid'] = str(uuid.uuid4().hex)
+	
 	return render_template('home.html', error=error)
 
 
@@ -45,7 +47,7 @@ def results():
 	# Check whether user has visited home page first to get user_uuid before coming to results
 	if 'user_uuid' in session:
 
-		file_object = request.files['uploadButton']
+		file_object = request.files['file']
 		convert_format = request.form['fileFormatSelect']
 
 		# Server Side Validation

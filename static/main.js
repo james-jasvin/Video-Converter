@@ -1,22 +1,17 @@
 
 // Client-side Validation
-function checkFileUpload() {
-	const uploadBtn = document.getElementById('uploadButton');
+function checkFileUpload(uploadBtn, fileFormatSelected) {
+
+	var errorMessageText = "";
 
 	// 1. Check whether file is uploaded or not
 	if (uploadBtn.files.length == 1) {
 
-		fileNameArray = uploadBtn.files[0].name.split('.');
+		var fileNameArray = uploadBtn.files[0].name.split('.');
 		// Prepend "." as checking is more convenient that way
-		uploadedFileFormat = "." + fileNameArray[fileNameArray.length - 1];
+		var uploadedFileFormat = "." + fileNameArray[fileNameArray.length - 1];
 
-		// Get the file format to convert to from the Dropdown in the form
-		const fileFormatSelect = document.getElementById('fileFormatSelect').options;
-		const fileFormatSelected = fileFormatSelect[fileFormatSelect.selectedIndex].innerText;
-
-		supportedFileFormatsArray = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv'];
-
-		errorMessageText = "";
+		var supportedFileFormatsArray = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv'];
 
 		// 2. Are format to convert to and uploaded file format, the same?
 		if (uploadedFileFormat == fileFormatSelected)
@@ -28,16 +23,16 @@ function checkFileUpload() {
 
 		// Passed all checks and can now be sent to server
 		else {
-			loaders = document.getElementById("loading");
+			var loaders = document.getElementById("loading");
 			loaders.style.display = 'block';
 			return true;
 		}
 
+		console.log(errorMessageText);
 		// Did not pass check, so show the errorMessageDiv and do not allow form to be submitted
 		showErrorDiv(errorMessageText);
 		return false;
 	}
-	
 	errorMessageText = "No file uploaded";
 	showErrorDiv(errorMessageText)
 
@@ -70,24 +65,6 @@ function clearPage() {
 */
 $(document).ready(function() {
 
-	/* 
-		JavaScript that will update text of element with id="fileChosen" to be equal to the name of the file uploaded, 
-		a feature that is provided by HTML by default but we hid it to make a better looking button
-	*/
-	const uploadBtn = document.getElementById('uploadButton');
-	const fileChosenSpan = document.getElementById('fileChosen');
-
-	uploadBtn.addEventListener('change', function(){
-	  fileChosenSpan.innerHTML = "Your uploaded file is \"<i><b>" + this.files[0].name + "</b></i>\""
-	});
-
-	/* 
-		Script for close button, when clicked, hide its parent element ("small" tag) with slideUp animation
-	*/
-	$(".close-button").click(function() {
-		$(".close-button").parent().slideUp(1000);
-	});	
-
 	/*
 		typed.js script that shows up on home page with fancy text animation on header text
 		How it works is pretty straightforward
@@ -104,14 +81,67 @@ $(document).ready(function() {
 		}); 
 	}
 
-	/*
-		When Convert Button is clicked, hide both error messages (client and server)
-		But do not hide the div, instead hide the "small" tag that's nested within the div
-		which contains the actual error message as well as the close icon
-	*/
-	$("#convertButton").click(function() {
-		$("#errorMessageClient").find("small").hide();
-		$("#errorMessageServer").find("small").hide();
-	});
+
+	if ($("body").hasClass("homePage")) {
+
+		/* 
+			JavaScript that will update text of element with id="fileChosen" to be equal to the name of the file uploaded, 
+			a feature that is provided by HTML by default but we hid it to make a better looking button
+		*/
+		var uploadBtn = document.getElementById('uploadButton');
+		var fileChosenSpan = document.getElementById('fileChosen');
+
+		uploadBtn.addEventListener('change', function(){
+		  fileChosenSpan.innerHTML = "Your uploaded file is \"<i><b>" + this.files[0].name + "</b></i>\""
+		});
+
+		/* 
+			Script for close button, when clicked, hide its parent element ("small" tag) with slideUp animation
+		*/
+		$(".close-button").click(function() {
+			$(".close-button").parent().slideUp(1000);
+		});	
+
+		// When convert button is clicked, call client validation, if passed then post data to results route and
+		// also hide the error messages and then call the poller function
+		$("#convertButton").on('click', function() {
+
+			var uploadBtn = document.getElementById("uploadButton");
+			var fileFormatSelected = document.getElementById("fileFormatSelect").value;
+
+			if (checkFileUpload(uploadBtn, fileFormatSelected) === false)
+				return false;
+
+
+			/*
+				When Convert Button is clicked, hide both error messages (client and server)
+				But do not hide the div, instead hide the "small" tag that's nested within the div
+				which contains the actual error message as well as the close icon
+			*/
+			$("#errorMessageClient").find("small").hide();
+			$("#errorMessageServer").find("small").hide();
+
+			var formData = new FormData();
+			formData.append('fileFormatSelect', fileFormatSelected);
+			formData.append('file', uploadBtn.files[0]);
+
+			$.ajax({
+				url: '/results',
+				data: formData,
+				method: 'POST',
+				processData: false,
+				contentType: false
+			})
+			.done((res) => {
+				console.log("Submitted Form Data")
+			})
+			.fail((err) => {
+				console.log("Failed form submission");
+				console.log(err);
+			});
+
+		});
+
+	}
 
 });
