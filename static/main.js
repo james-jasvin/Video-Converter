@@ -86,15 +86,16 @@ $(document).ready(function() {
 		}); 
 	}
 
-
+	// These scripts are associated with only home page, so that is why we added class "homePage" to body tag 
+	// of home.html and then check it here in order to ensure which page this is
 	if ($("body").hasClass("homePage")) {
-		// If user is on home page but URL bar shows results or anything else
-		// because of unauthorized access by user to results endpoint without submitting form
+		// If user is on home page but URL bar shows jobs or anything else
+		// because of unauthorized access by user to jobs endpoint without submitting form
 		// then redirect user to home with Unauthorized access error code
 
 		var location = window.location.href.split('/');
 		var currentLocation = location[location.length - 1];
-		if (currentLocation == "results")
+		if (currentLocation == "jobs")
 			window.location.replace("../105");
 
 		/* 
@@ -144,7 +145,7 @@ $(document).ready(function() {
 			formData.append('file', uploadBtn.files[0], uploadBtn.files[0].name);
 
 			$.ajax({
-				url: '/results',
+				url: '/jobs',
 				data: formData,
 				method: 'POST',
 				processData: false,
@@ -174,7 +175,7 @@ $(document).ready(function() {
 
 function getJobStatus(jobID) {
 	$.ajax({
-		url: `/results/${jobID}`,
+		url: `/jobs/${jobID}`,
 		method: 'GET'
 	})
 	.done((res) => {

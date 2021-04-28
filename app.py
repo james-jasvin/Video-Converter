@@ -46,7 +46,7 @@ def home(error=None):
 	This route performs server-side validation, if failed, redirects to home with proper error code and if succeeded
 	converts video to requested format and then leads to the "download.html" page
 '''
-@app.route('/results', methods=['POST'])
+@app.route('/jobs', methods=['POST'])
 def results():
 
 	response_object = {
@@ -111,7 +111,7 @@ def results():
 	return jsonify(response_object), 302
 
 
-@app.route('/results/<job_key>', methods=['GET'])
+@app.route('/jobs/<job_key>', methods=['GET'])
 def get_results(job_key):
 
 	job = Job.fetch(job_key, connection=conn)
