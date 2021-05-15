@@ -65,6 +65,7 @@ def results():
 
 		file_object = request.files['file']
 		convert_format = request.form['fileFormatSelect']
+		preset_format = request.form['presetSelect'].lower()
 
 		# Server Side Validation
 		# If failed, then redirect to home with the appropriate error message
@@ -94,7 +95,7 @@ def results():
 		# 5,000 seconds in this case. 
 		job = queue.enqueue_call(
 			func='app.video_converter', 
-			args=(input_filepath, convert_format, OUTPUT_FOLDER_PATH),
+			args=(input_filepath, convert_format, preset_format, OUTPUT_FOLDER_PATH),
 			result_ttl=5000)
 
 		print(job.get_id())
@@ -190,7 +191,7 @@ def server_side_validation(request, user_filename, convert_format):
 	return error_code
 
 
-def video_converter(filepath, extension, output_directory):
+def video_converter(filepath, extension, preset_format, output_directory):
 	'''
 		Function that converts given user input video into given format
 		
@@ -211,11 +212,11 @@ def video_converter(filepath, extension, output_directory):
 	output_filepath = output_directory + output_filename
 
 	if extension == '.mp4':
-		clip.write_videofile(output_filepath, preset='ultrafast')
+		clip.write_videofile(output_filepath, preset=preset_format)
 	elif extension == '.flv':
-		clip.write_videofile(output_filepath, codec='libx264', preset='ultrafast')
+		clip.write_videofile(output_filepath, codec='libx264', preset=preset_format)
 	else:
-		clip.write_videofile(output_filepath, codec='libvpx', preset='ultrafast')
+		clip.write_videofile(output_filepath, codec='libvpx', preset=preset_format)
 
 	response_object = {
 		"status": "success",

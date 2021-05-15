@@ -37,10 +37,6 @@
 			</a>
 		</nav>
 
-
-		<!-- Contains background image -->
-		<div class="bg-image"></div>
-
 		<!-- Contains actual content of the page -->
 		<div id="content" class="d-flex flex-column align-items-center justify-content-center">
 
@@ -81,6 +77,19 @@
 									<option>.flv</option>
 									<option>.webm</option>
 									<option>.wmv</option>
+								</select>
+							</small>
+						</div>
+
+						<!-- Select Compression Preset -->
+						<div class="form-group">
+							<label for="compression-preset" class="font-weight-bold"> Select Compression Preset </label> <br>
+							<small>
+								<select id="presetSelect" name="presetSelect" class="pl-2 pr-2" required>
+									<option>Ultrafast</option>
+									<option>Fast</option>
+									<option>Medium</option>
+									<option>Slow</option>
 								</select>
 							</small>
 						</div>

@@ -124,6 +124,7 @@ $(document).ready(function() {
 
 			var uploadBtn = document.getElementById("uploadButton");
 			var fileFormatSelected = document.getElementById("fileFormatSelect").value;
+			var presetSelected = document.getElementById("presetSelect").value;
 
 			/*
 				When Convert Button is clicked, hide both error messages (client and server)
@@ -141,6 +142,7 @@ $(document).ready(function() {
 
 			var formData = new FormData();
 			formData.append('fileFormatSelect', fileFormatSelected);
+			formData.append('presetSelect', presetSelected);
 			formData.append('file', uploadBtn.files[0], uploadBtn.files[0].name);
 
 			$.ajax({
