@@ -2,7 +2,6 @@
 # Add dropdown for handling conversion preset
 # Add proper documentation
 
-
 import os
 from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, send_file, jsonify
 import uuid
@@ -34,6 +33,13 @@ queue = Queue(connection=conn)
 @app.route('/home')
 @app.route('/<error>')
 def home(error=None):
+	'''
+		Route that is triggered when user reaches home page. 
+		It is also reached when user form submission triggers a server-side error
+		in which case the user will be redirected to home page with the appropriate error code.
+		Whenever user enters home page for the first time, the session information is updated with a user UUID in order 
+		to distinguish user's file uploads from other user's file uploads
+	'''
 	if 'user_uuid' not in session:
 		# global uuid for user
 		session['user_uuid'] = str(uuid.uuid4().hex)
@@ -41,13 +47,13 @@ def home(error=None):
 	return render_template('home.html', error=error)
 
 
-'''
-	Route that is triggered when the Convert button on "home.html" is clicked and all the client side validation is passed
-	This route performs server-side validation, if failed, redirects to home with proper error code and if succeeded
-	converts video to requested format and then leads to the "download.html" page
-'''
 @app.route('/jobs', methods=['POST'])
 def results():
+	'''
+		Route that is triggered when the Convert button on "home.html" is clicked and all the client side validation is passed
+		This route performs server-side validation, if failed, redirects to home with proper error code and if succeeded
+		converts video to requested format and then leads to the "download.html" page
+	'''
 
 	response_object = {
 		'status': "fail",
@@ -84,10 +90,6 @@ def results():
 
 		print("Input Video Saved")
 
-		# Function that takes video file path and file format and converts it
-		# video_converter(input_filepath, convert_format, OUTPUT_FOLDER_PATH)
-
-
 		# The result_ttl=5000 line argument tells RQ how long to hold on to the result of the job for, 
 		# 5,000 seconds in this case. 
 		job = queue.enqueue_call(
@@ -98,7 +100,6 @@ def results():
 		print(job.get_id())
 
 		# Job started, check whether it has completed by sending it to the results route
-		# print("Video Conversion Complete")
 		response_object = {
 			"status": "success",
 			"job_id": job.get_id()
@@ -133,28 +134,35 @@ def get_results(job_key):
 
 	return jsonify(response_object)
 	
-'''
-	Route that renders the download page and also takes in filename of output video as a URL parameter
 
-'''
 @app.route('/downloads/<filename>', methods=['GET'])
 def downloads(filename):
+	'''
+		Route that renders the download page and also takes in filename of output video as a URL parameter
+	'''
 	return render_template('download.html', filename=filename)
 
-'''
-	Route that sends the converted video for download when the "Download" button on downloads.html page is clicked
-'''
+
 @app.route('/download_file/<filename>', methods=['GET', 'POST'])
 def download_file(filename):
+	'''
+		Route that sends the converted video for download when the "Download" button on downloads.html page is clicked
+	'''
 	return send_from_directory(directory=OUTPUT_FOLDER_PATH, filename=filename, as_attachment=True)
 
-'''
-	Performs server side validation
-	Returns: error_code
-	If validation is successful, error_code = None
-	Else, error_code would contain the appropriate error code which will be matched with error message in the home.html page
-'''
+
 def server_side_validation(request, user_filename, convert_format):
+	'''
+		Performs server side validation
+		
+		Parameters:
+			request (obj): The request object that was received by the server
+			user_filename (str): Filename of user uploaded file, used for checking whether request contains any files 
+			convert_format (str): User input which states which format to convert video to
+		Returns: 
+			error_code (int): A code which corresponds to the type of error encountered which is matched in home.html
+							  If no error encountered then error_code = None
+	'''
 	file_format = os.path.splitext(user_filename)[1]
 
 	error_code = None
@@ -183,6 +191,15 @@ def server_side_validation(request, user_filename, convert_format):
 
 
 def video_converter(filepath, extension, output_directory):
+	'''
+		Function that converts given user input video into given format
+		
+		Parameters:
+			input_filename (str): Filename of saved video on server (this is UUID based name and not user uploaded filename)
+			new_extension (str): The format to which the given video is to be converted to
+			preset_format (str): The preset type to be used for converting the video
+								 Possible values include, ultrafast, fast, medium, slow
+	'''
 	print("Starting conversion")
 	clip = moviepy.VideoFileClip(filepath)
 	print("Loaded clip and starting conversion")

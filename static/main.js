@@ -63,10 +63,9 @@ function clearPage() {
 
 /* 
 	All individual scripts (non-functions) are added under this JQuery document.ready() function 
-	so that the <script src=" "> can be linked in <head> tag 
-	but all the scripts will start executing only when the page actually loads
+	so that all the scripts will start executing only when the page actually loads
 	and it will be able to find all the document elements (by id, name, etc.), 
-	otherwise the script will not find reference and basically will not run
+	otherwise the script will not find reference to some of the elements and so will not run
 */
 $(document).ready(function() {
 
