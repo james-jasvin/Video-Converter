@@ -1,6 +1,5 @@
-#TODO: Change results route to jobs
-# Add dropdown for handling conversion preset
-# Add proper documentation
+# TODO:
+# Deploy everything to Heroku
 
 import os
 from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, send_file, jsonify
@@ -27,6 +26,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wm
 INPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "input_videos/")
 OUTPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "output_videos/")
 
+# Redis Task Queue that will handle all jobs
 queue = Queue(connection=conn)
 
 @app.route('/')
@@ -73,7 +73,6 @@ def results():
 
 		error_code = server_side_validation(request, user_filename, convert_format)
 		if error_code != None:
-			# return redirect(url_for('home', error=error_code))
 			response_object['error_code'] = error_code
 			return jsonify(response_object), 202
 
@@ -91,6 +90,7 @@ def results():
 
 		print("Input Video Saved")
 
+		# Enqueue the video conversion job on the Redis Task Queue
 		# The result_ttl=5000 line argument tells RQ how long to hold on to the result of the job for, 
 		# 5,000 seconds in this case. 
 		job = queue.enqueue_call(
@@ -100,13 +100,12 @@ def results():
 
 		print(job.get_id())
 
-		# Job started, check whether it has completed by sending it to the results route
 		response_object = {
 			"status": "success",
 			"job_id": job.get_id()
 		}
 
-		# Respond to request with success code
+		# Respond to request by Client with success code indicating that job has started
 		return jsonify(response_object), 202
 		
 	# Return request with failure (indicated by 302 code)
@@ -115,7 +114,18 @@ def results():
 
 @app.route('/jobs/<job_key>', methods=['GET'])
 def get_results(job_key):
-
+	'''
+		Route that returns job status of given job to the requesting Client. Used for polling the submitted job by the Client
+		
+		Parameters:
+			job_key (str): The job id of the job to return status for
+			
+		Returns:
+			response_object (JSON): If job exists then status is success, else status is error
+			If job exists, then job status can be fetched using response_object['data']['job_status']
+			The result of the job (video conversion output) can be fetched for a completed job using,
+			response_object['data']['job_result']
+	'''
 	job = Job.fetch(job_key, connection=conn)
 	
 	# If job exists then return job id and status along with result
@@ -200,15 +210,19 @@ def video_converter(filepath, extension, preset_format, output_directory):
 			new_extension (str): The format to which the given video is to be converted to
 			preset_format (str): The preset type to be used for converting the video
 								 Possible values include, ultrafast, fast, medium, slow
+
+		Returns:
+			response_object (JSON): Contains converted video's filename
+			This JSON will be sent to task queue and is eventually obtained by polling function at client-side
 	'''
 	print("Starting conversion")
 	clip = moviepy.VideoFileClip(filepath)
 	print("Loaded clip and starting conversion")
 
 	head, tail = os.path.split(filepath)
-	basename = Path(tail).stem  # Gintama.mkv -> Gintama
+	basename = Path(tail).stem  # splits the filename from its extension, i.e., Gintama.mkv -> Gintama
 
-	output_filename = basename + extension   # Gintama + new_extension
+	output_filename = basename + extension
 	output_filepath = output_directory + output_filename
 
 	if extension == '.mp4':
@@ -218,6 +232,7 @@ def video_converter(filepath, extension, preset_format, output_directory):
 	else:
 		clip.write_videofile(output_filepath, codec='libvpx', preset=preset_format)
 
+	# Store video conversion result in JSON 
 	response_object = {
 		"status": "success",
 		"filename": output_filename
