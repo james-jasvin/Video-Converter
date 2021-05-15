@@ -7,12 +7,6 @@
 		<!-- Bootstrap 4.4.1 -->
 		<link rel="stylesheet" type="text/css" href="/static/lib/bootstrap.min.css"></link>
 
-		<!-- JQuery 3.6.0 -->
-		<script src="/static/lib/jquery-3.6.0.min.js"></script>
-
-		<!-- typed.js -->
-		<script src="/static/lib/typed.min.js"></script>
-
 		<!-- Font Awesome Icons CDN -->
 		<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
@@ -20,9 +14,9 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
 
-		<!-- External CSS & JS Script -->
+		<!-- External CSS Script -->
 		<link rel="stylesheet" type="text/css" href="/static/main.css">
-		<script src="/static/main.js"></script> 
+		
 	</head>
 
 	<!-- 
@@ -31,7 +25,7 @@
 		When Home Page loads, clear form data and hide error messages (but dont hide Server Side errors)
 		When user backspaces to reach home page, reload page so that the clearPage method gets triggered 
 	-->
-	<body class="container-fluid" onunload="clearPage();" onload="clearPage();">
+	<body class="homePage container-fluid" onunload="clearPage();" onload="clearPage();">
 		<!-- Sticky navbar at top of page -->
 		<nav class="navbar sticky-top row regular-shadow">
 			<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> 
@@ -42,10 +36,6 @@
 				Source Code <i class="fa fa-download" aria-hidden="true"></i>
 			</a>
 		</nav>
-
-
-		<!-- Contains background image -->
-		<div class="bg-image"></div>
 
 		<!-- Contains actual content of the page -->
 		<div id="content" class="d-flex flex-column align-items-center justify-content-center">
@@ -59,7 +49,7 @@
 				</div>
 
 				<div id="form-container" class="content-block content-container mt-5 regular-shadow">
-					<form id="uploadForm" action="{{url_for('results')}}" method="POST" enctype="multipart/form-data" onsubmit="return checkFileUpload();">
+					<form id="uploadForm" method="POST" enctype="multipart/form-data">
 
 						<!-- Upload Button -->
 						<div class="form-group mt-3">
@@ -78,7 +68,7 @@
 
 						<!-- Select Video Format -->
 						<div class="form-group">
-							<label for="video-format" class="font-weight-bold"> Select Format to Convert to </label> <br>
+							<label for="fileFormatSelect" class="font-weight-bold"> Select Format to Convert to </label> <br>
 							<small>
 								<select id="fileFormatSelect" name="fileFormatSelect" class="pl-2 pr-2" required>
 									<option>.mkv</option>
@@ -87,6 +77,19 @@
 									<option>.flv</option>
 									<option>.webm</option>
 									<option>.wmv</option>
+								</select>
+							</small>
+						</div>
+
+						<!-- Select Compression Preset -->
+						<div class="form-group">
+							<label for="compression-preset" class="font-weight-bold"> Select Compression Preset </label> <br>
+							<small>
+								<select id="presetSelect" name="presetSelect" class="pl-2 pr-2" required>
+									<option>Ultrafast</option>
+									<option>Fast</option>
+									<option>Medium</option>
+									<option>Slow</option>
 								</select>
 							</small>
 						</div>
@@ -119,8 +122,12 @@
 									{% elif error == 103 %}
 										File format to convert to should be different than uploaded file format
 
-									{% else %}
+									{% elif error == 104 %}
 										File size should not be greater than 10MB
+
+									{% else %}
+										Unauthorized access
+
 									{% endif %}
 								</span>
 								<i class="close-button fas fa-window-close"></i>
@@ -144,5 +151,14 @@
 				&copy;TurdGang 2021-2021
 			</footer>
 		</div>
+
+		<!-- JQuery 3.6.0 -->
+		<script src="/static/lib/jquery-3.6.0.min.js"></script>
+
+		<!-- typed.js -->
+		<script src="/static/lib/typed.min.js"></script>
+
+		<!-- External JS Script -->
+		<script src="/static/main.js"></script> 
 	</body>
 </html>

@@ -7,12 +7,6 @@
 		<!-- Bootstrap 4.4.1 -->
 		<link rel="stylesheet" type="text/css" href="/static/lib/bootstrap.min.css"></link>
 
-		<!-- JQuery 3.6.0 -->
-		<script src="/static/lib/jquery-3.6.0.min.js"></script>
-
-		<!-- typed.js -->
-		<script src="/static/lib/typed.min.js"></script>
-
 		<!-- Font Awesome Icons CDN -->
 		<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
@@ -20,12 +14,11 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?300&family=Raleway:wght@300&display=swap" rel="stylesheet"> 
 
-		<!-- External CSS & JS Script -->
+		<!-- External CSS -->
 		<link rel="stylesheet" type="text/css" href="/static/main.css">
-		<script src="/static/main.js"></script> 
 	</head>
 
-	<body class="container-fluid">
+	<body class="downloadPage container-fluid">
 		<!-- Sticky navbar at top of page -->
 		<nav class="navbar sticky-top row regular-shadow">
 			<a class="navbar-brand text-light regular-text-shadow" href="{{ url_for('home') }}"> 
@@ -37,9 +30,6 @@
 				Source Code <i class="fa fa-download" aria-hidden="true"></i>
 			</a>
 		</nav>
-
-		<!-- Contains background image -->
-		<div class="bg-image"></div>
 
 		<!-- Contains actual content of the page -->
 		<div id="content" class="d-flex flex-column align-items-center justify-content-center">
@@ -55,7 +45,7 @@
 				<div id="download-container" class="content-block content-container mt-5 regular-shadow">
 					<h3> Your converted video is ready for download </h3>
 
-					<a class="btn btn-dark regular-shadow mb-5" href="{{ url_for('download', filename=filename) }}"> Download </a> <br>
+					<a id="downloadButton" class="btn btn-dark regular-shadow mb-5" href="{{ url_for('download_file', filename=filename) }}"> Download </a> <br>
 
 					<h4> Start converting another video </h4>
 					<a class="btn btn-dark regular-shadow" href="{{ url_for('home') }}"> Back <i class="fas fa-arrow-circle-left"> </i> </a>
@@ -66,5 +56,14 @@
 				&copy;TurdGang 2021-2021
 			</footer>
 		</div>
+
+		<!-- JQuery 3.6.0 -->
+		<script src="/static/lib/jquery-3.6.0.min.js"></script>
+
+		<!-- typed.js -->
+		<script src="/static/lib/typed.min.js"></script>
+
+		<!-- External JS Script -->
+		<script src="/static/main.js"></script> 
 	</body>
 </html>
