@@ -20,7 +20,7 @@ UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads/')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Set of allowed extensions
-app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv']
+app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.mkv', '.flv', '.webm', '.wmv']
 
 # Set input and output video absolute paths
 INPUT_FOLDER_PATH = os.path.join(UPLOAD_FOLDER, "input_videos/")

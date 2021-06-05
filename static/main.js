@@ -16,7 +16,7 @@ function checkFileUpload(uploadBtn, fileFormatSelected) {
 		// Prepend "." as checking is more convenient that way
 		var uploadedFileFormat = "." + fileNameArray[fileNameArray.length - 1];
 
-		var supportedFileFormatsArray = ['.mp4', '.avi', '.mkv', '.flv', '.webm', '.wmv'];
+		var supportedFileFormatsArray = ['.mp4', '.mkv', '.flv', '.webm', '.wmv'];
 
 		// 2. Are format to convert to and uploaded file format, the same?
 		if (uploadedFileFormat == fileFormatSelected)
