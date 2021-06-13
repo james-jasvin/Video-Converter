@@ -2,7 +2,7 @@
 
 Web-app Link: https://video-converter-420.herokuapp.com/
 
-Article Links: 
+Article Links:<br>
 <a href="https://jasvin-manjaly.medium.com/integrating-redis-task-queue-with-flask-app-and-deployment-to-heroku-6f3e84f79978?source=friends_link&sk=ba3a292920c728d2cdacb03b30bd1405">Integrating Redis Task Queue with Flask App and Deployment to Heroku</a>
 <br>
 REALLY LONG ARTICLE ALERT!!! <br>
@@ -16,7 +16,7 @@ A Flask web-app that uses the moviepy library to convert user uploaded videos fr
 
 Supported formats include, mkv, mp4, flv, wmv, webm. "avi" was also supported before but it was taking too much time even on local deploy, let alone on a Heroku free dyno.
 
-Do note that converting videos on the web-app will still take quite some time, definitely have to give it a few minutes because the video format uploaded and selected for conversion dictate how long the whole process will take.
+Do note that converting videos on the web-app will still take quite some time, definitely have to give it a few minutes because the video format uploaded and selected for conversion dictates how long the whole process will take.
 A max cap of 10MB is placed on the video uploaded to prevent large files from being stored on the server.
 
 # What is being used?
