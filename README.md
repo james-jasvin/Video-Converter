@@ -1,13 +1,13 @@
-# Video Converter 420
+# Video-Converter-420
 
 Web-app Link: https://video-converter-420.herokuapp.com/
 
 Article Links: 
-
+https://jasvin-manjaly.medium.com/integrating-redis-task-queue-with-flask-app-and-deployment-to-heroku-6f3e84f79978?source=friends_link&sk=ba3a292920c728d2cdacb03b30bd1405<br>
 REALLY LONG ARTICLE ALERT!!! <br>
 I describe the whole process of making the web-app in this article except for the basic steps of making a Flask web-app.
 
-[LINK]<br>
+https://jasvin-manjaly.medium.com/fix-the-30-second-timeout-error-on-heroku-25755ffbca95?source=friends_link&sk=203e21eaafbd5d05c731234b0d9d7077<br>
 In this article I have given a standard template for Flask web-apps to avoid the 30 second timeout error on Heroku using Redis Task Queues.
 
 # What it is?
