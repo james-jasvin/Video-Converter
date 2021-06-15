@@ -71,7 +71,7 @@ def results():
 		error_code = server_side_validation(request, user_filename, convert_format)
 		if error_code != None:
 			response_object['error_code'] = error_code
-			return jsonify(response_object), 202
+			return jsonify(response_object), 302
 
 		# Generate unique filename for uploaded file
 		file_id = str(uuid.uuid4().hex)[:5]
