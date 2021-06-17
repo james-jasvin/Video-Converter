@@ -1,3 +1,4 @@
-env
+env/
 dump.rdb
 __pycache__/
+static/uploads/

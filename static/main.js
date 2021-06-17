@@ -179,6 +179,9 @@ $(document).ready(function() {
 				}
 				else {
 					console.log("Calling Poller");
+					// Hiding convert button because when loading screen is displayed the button is still visible
+					// so user can spam the button, resulting in infinite Redis job creation and this hiding prevents that
+					$("#convertButton").hide();
 					getJobStatus(res['job_id']);
 				}
 
