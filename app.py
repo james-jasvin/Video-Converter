@@ -9,7 +9,8 @@ from rq.job import Job
 from worker import conn
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+# Session variables will not work unless SECRET_KEY is configured properly at Heroku end
+app.secret_key = os.getenv('SECRET_KEY', os.urandom(16))
 
 # Set the upload folder for whatever we upload
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
