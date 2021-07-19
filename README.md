@@ -21,9 +21,8 @@ A max cap of 10MB is placed on the video uploaded to prevent large files from be
 
 # What is being used?
 The web-app is built on Python Flask and uses moviepy for video conversion. The task of video conversion is given to a background worker with the help of Redis Task Queues.
-This is done to prevent Client-Server communication to remain idle for the entire video conversion process resulting in a connection timeout error, 
-typically known as the 30 second timeout error on Heroku. This is bypassed by the Client polling the Server every 2 seconds to check video conversion job status
-until the job is finished in which case, the Client is redirected to results page with the download video button. 
+This is done to prevent the Client-Server communication from remaining idle for the entire video conversion process resulting in a connection timeout error, 
+typically known as the 30 second timeout error on Heroku. This error is bypassed by the Client polling the Server every 2 seconds to check the video conversion job status until the job is finished in which case, the Client is redirected to results page with the download video button. 
 This polling and Client-side requesting is done with the help of AJAX requests.
 
 If there's any mistake that I might have made or some aspect that I could have improved on then do let me know as it will help me out a lot!
